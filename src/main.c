@@ -1,48 +1,8 @@
-#define CAMERA_HEIGHT 256
-#define CAMERA_WIDTH 512
-#define CAMERA_DISTANCE 100
-
-#define PI 3.14159265359
-#define FOV 66
-#define FOV_ANGLE (FOV*PI)/180
-#define UNIT_ANGLE FOV_ANGLE/CAMERA_WIDTH
-
-#define KEY_TILT_RIGHT 0
-#define KEY_TILT_LEFT 1
-#define KEY_FORWARD 2
-#define KEY_BACKWARD 3
-#define KEY_ASCEND 4
-#define KEY_DESCEND 5
-
-#define FPS 60                          //frequencia
-#define FRAME_TARGET_TIME (1000 / FPS)  //Periodo (em ms)
-
-#define PLAYER_SPEED 10
-#define TURN_SPEED 30
-
-#include <SDL2/SDL.h>
-#include <stdlib.h>
-#include <stdio.h>
-#include <stdbool.h>
-
-//TODO: camera distance still has to be higher than the plane to work.
-//      This can be fixed by checking the deltas. Actually requires another
-//      formula or way to obtain the projection
-//TODO: Controls to move player around. Needs speed parameters and bla bla bla
-//TODO: Check negative or obtuse angles to see if the formula works
-//TODO: Most important problems are probably related to the relation between cam_ypos(iy),
-//      height and Camera Plane. Check the calculations and see if there is anything wrong
+#include "main.h"
 
 SDL_Window *window;
 SDL_Renderer *renderer; 
 SDL_Color array[64*64];
-
-struct playerObj{
-    float xPos;
-    float yPos;
-    float zPos;
-    float angle;
-};
 
 struct playerObj PlayerObj = {
     20,
@@ -59,16 +19,7 @@ int last_frame_t = 0;
 //and the point the player is seeing. Distance in xz depends only on
 //playeryPos and the scanline y coordinate
 int getDistancePlaneXZ(float yPos, float cam_yPos){ 
-    /*
-    if(cam_yPos - PlayerObj.yPos >= 0){
         return CAMERA_DISTANCE*(yPos/(yPos - cam_yPos));
-    }
-    return CAMERA_DISTANCE*(yPos/(CAMERA_HEIGHT - cam_yPos));
-    */
-//    if(cam_yPos >= 0){
-        return CAMERA_DISTANCE*(yPos/(yPos - cam_yPos));
-//    }
-//    return CAMERA_DISTANCE*(yPos/(yPos + cam_yPos));
 }
 
 //receives the "scanline" or cam_yPos, an angle and returns the projected point
@@ -89,7 +40,7 @@ void drawPoint(float projPoint[], int w, int h){
     int z = projPoint[1];
     SDL_Color color = array[z*64 + x];
     SDL_SetRenderDrawColor(renderer, color.r, color.g, color.b, 255);
-    SDL_Rect pixel = {w, h, 1, 1}; //corrects y axis inversion
+    SDL_Rect pixel = {2*w, 2*h, 2, 2}; //corrects y axis inversion
     SDL_RenderFillRect(renderer, &pixel);
 }
 
