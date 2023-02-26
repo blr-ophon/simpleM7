@@ -3,7 +3,7 @@
 
 #define CAMERA_HEIGHT 256
 #define CAMERA_WIDTH 512
-#define CAMERA_DISTANCE 100
+#define CAMERA_DISTANCE 50
 
 #define PI 3.14159265359
 #define FOV 66
@@ -20,7 +20,7 @@
 #define FPS 60                          //frequencia
 #define FRAME_TARGET_TIME (1000 / FPS)  //Periodo (em ms)
 
-#define PLAYER_SPEED 10
-#define TURN_SPEED 30
+#define PLAYER_SPEED 15
+#define TURN_SPEED 50
 
 #endif

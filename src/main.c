@@ -6,11 +6,10 @@ SDL_Color array[64*64];
 
 struct playerObj PlayerObj = {
     20,
-    512,
+    64,
     20,
     0
 };
-
 bool running = 1;
 bool keymap[6];
 int last_frame_t = 0;
@@ -86,16 +85,16 @@ void process_input(void){
 			if(event.key.keysym.sym == SDLK_a) {keymap[KEY_TILT_LEFT] = 1;}
 			if(event.key.keysym.sym == SDLK_w) {keymap[KEY_FORWARD] = 1;}
 			if(event.key.keysym.sym == SDLK_s) {keymap[KEY_BACKWARD] = 1;}
-			if(event.key.keysym.sym == SDLK_u) {keymap[KEY_ASCEND] = 1;}
-			if(event.key.keysym.sym == SDLK_j) {keymap[KEY_DESCEND] = 1;}
+			if(event.key.keysym.sym == SDLK_SPACE) {keymap[KEY_ASCEND] = 1;}
+			if(event.key.keysym.sym == SDLK_LSHIFT) {keymap[KEY_DESCEND] = 1;}
             break;
 		case SDL_KEYUP:
 			if(event.key.keysym.sym == SDLK_d) {keymap[KEY_TILT_RIGHT] = 0;}
 			if(event.key.keysym.sym == SDLK_a) {keymap[KEY_TILT_LEFT] = 0;}
 			if(event.key.keysym.sym == SDLK_w) {keymap[KEY_FORWARD] = 0;}
 			if(event.key.keysym.sym == SDLK_s) {keymap[KEY_BACKWARD] = 0;}
-			if(event.key.keysym.sym == SDLK_u) {keymap[KEY_ASCEND] = 0;}
-			if(event.key.keysym.sym == SDLK_j) {keymap[KEY_DESCEND] = 0;}
+			if(event.key.keysym.sym == SDLK_SPACE) {keymap[KEY_ASCEND] = 0;}
+			if(event.key.keysym.sym == SDLK_LSHIFT) {keymap[KEY_DESCEND] = 0;}
             break;
         default:
             break;

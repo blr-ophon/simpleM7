@@ -1,5 +1,5 @@
 CC = gcc
-OPT = -O0
+OPT = -O3
 CFLAGS = -std=c99 -fPIC -g -Wall -Wextra -pedantic $(OPT)
 
 INCLUDES= -I ./include
