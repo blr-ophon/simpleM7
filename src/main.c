@@ -1,6 +1,6 @@
-#define CAMERA_HEIGHT 384
-#define CAMERA_WIDTH 768
-#define CAMERA_DISTANCE 100
+#define CAMERA_HEIGHT 480
+#define CAMERA_WIDTH 640
+#define CAMERA_DISTANCE 120
 
 #define PI 3.14159265359
 #define FOV 66
@@ -18,7 +18,8 @@
 #include <stdbool.h>
 
 //TODO: camera distance still has to be higher than the plane to work.
-//      This can be fixed by checking the deltas
+//      This can be fixed by checking the deltas. Actually requires another
+//      formula or way to obtain the projection
 //TODO: Controls to move player around. Needs speed parameters and bla bla bla
 //TODO: Check negative or obtuse angles to see if the formula works
 
@@ -35,7 +36,7 @@ struct playerObj{
 
 struct playerObj PlayerObj = {
     20,
-    512,
+    300,
     20,
     0
 };
@@ -43,6 +44,12 @@ struct playerObj PlayerObj = {
 bool running = 1;
 
 float getDistancePlaneXZ(float yPos, float cam_yPos){ 
+    /*
+    if(cam_yPos - PlayerObj.yPos >= 0){
+        return CAMERA_DISTANCE*(yPos/(yPos - cam_yPos));
+    }
+    return CAMERA_DISTANCE*(yPos/(CAMERA_HEIGHT - cam_yPos));
+    */
     if(cam_yPos >= 0){
         return CAMERA_DISTANCE*(yPos/(yPos - cam_yPos));
     }
@@ -73,7 +80,7 @@ void renderCameraPlane(void){
     float rayAngle = PlayerObj.angle;
     float texturePoint[2];
     //right side rays
-    for(int h = 0; h < CAMERA_HEIGHT; h++){
+    for(int h = 0; h < CAMERA_HEIGHT/2; h++){
         for(int w = CAMERA_WIDTH/2; w < CAMERA_WIDTH; w++){
             getFloorPoint(texturePoint, h, rayAngle);
             drawPoint(texturePoint, w, h);
@@ -84,7 +91,7 @@ void renderCameraPlane(void){
     }
     //left side rays
     rayAngle -= UNIT_ANGLE;
-    for(int h = 0; h < CAMERA_HEIGHT; h++){
+    for(int h = 0; h < CAMERA_HEIGHT/2; h++){
         for(int w = CAMERA_WIDTH/2 - 1; w >= 0; w--){
             getFloorPoint(texturePoint, h, rayAngle);
             drawPoint(texturePoint, w, h);
