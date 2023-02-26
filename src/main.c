@@ -1,5 +1,5 @@
-#define CAMERA_HEIGHT 512
-#define CAMERA_WIDTH 1024
+#define CAMERA_HEIGHT 384
+#define CAMERA_WIDTH 768
 #define CAMERA_DISTANCE 100
 
 #define PI 3.14159265359
@@ -7,12 +7,16 @@
 #define FOV_ANGLE (FOV*PI)/180
 #define UNIT_ANGLE FOV_ANGLE/CAMERA_WIDTH
 
+#define KEY_TILT_RIGHT 0
+#define KEY_TILT_LEFT 1
+#define KEY_FORWARD 2
+#define KEY_BACKWARD 3
+
 #include <SDL2/SDL.h>
 #include <stdlib.h>
 #include <stdio.h>
 #include <stdbool.h>
 
-//TODO: points with negative x and z values produce noise on the screen
 //TODO: camera distance still has to be higher than the plane to work.
 //      This can be fixed by checking the deltas
 //TODO: Controls to move player around. Needs speed parameters and bla bla bla
@@ -29,7 +33,7 @@ struct playerObj{
     float angle;
 };
 
-struct playerObj Player = {
+struct playerObj PlayerObj = {
     20,
     512,
     20,
@@ -49,9 +53,11 @@ void getFloorPoint(float projPoint[], float cam_yPos, float angle){
     //receives the "scanline" or cam_yPos, an angle and returns the projected point
     //on the floor texture. Expects the caller to calculate the angle by adding and 
     //subtracting unit angles (based on FOV) from the player view angle.
-    float delta = getDistancePlaneXZ(Player.yPos, cam_yPos);
-    projPoint[0] = fmod(delta*cos(angle) + Player.xPos, 64);
-    projPoint[1] = fmod(delta*sin(angle) + Player.zPos, 64);
+    float delta = getDistancePlaneXZ(PlayerObj.yPos, cam_yPos);
+    projPoint[0] = fmod(delta*cos(angle) + PlayerObj.xPos, 64);
+    projPoint[0] = fabs(projPoint[0]);
+    projPoint[1] = fmod(delta*sin(angle) + PlayerObj.zPos, 64);
+    projPoint[1] = fabs(projPoint[1]);
 }
 
 void drawPoint(float projPoint[], int w, int h){
@@ -64,7 +70,7 @@ void drawPoint(float projPoint[], int w, int h){
 }
 
 void renderCameraPlane(void){
-    float rayAngle = Player.angle;
+    float rayAngle = PlayerObj.angle;
     float texturePoint[2];
     //right side rays
     for(int h = 0; h < CAMERA_HEIGHT; h++){
@@ -74,7 +80,7 @@ void renderCameraPlane(void){
             rayAngle += UNIT_ANGLE;
 
         }
-        rayAngle = Player.angle; 
+        rayAngle = PlayerObj.angle; 
     }
     //left side rays
     rayAngle -= UNIT_ANGLE;
@@ -84,10 +90,15 @@ void renderCameraPlane(void){
             drawPoint(texturePoint, w, h);
             rayAngle -= UNIT_ANGLE;
         }
-        rayAngle = Player.angle; 
+        rayAngle = PlayerObj.angle; 
     }
     SDL_RenderPresent(renderer);
 }
+
+bool keymap[4];
+
+#define PLAYER_SPEED 10
+#define TURN_SPEED 30
 
 void process_input(void){
     SDL_Event event;
@@ -97,8 +108,49 @@ void process_input(void){
             break;
 		case SDL_KEYDOWN:
 			if(event.key.keysym.sym == SDLK_ESCAPE) {running = false;}
+			if(event.key.keysym.sym == SDLK_ESCAPE) {running = false;}
+			if(event.key.keysym.sym == SDLK_d) {keymap[KEY_TILT_RIGHT] = 1;}
+			if(event.key.keysym.sym == SDLK_a) {keymap[KEY_TILT_LEFT] = 1;}
+			if(event.key.keysym.sym == SDLK_w) {keymap[KEY_FORWARD] = 1;}
+			if(event.key.keysym.sym == SDLK_s) {keymap[KEY_BACKWARD] = 1;}
+            break;
+		case SDL_KEYUP:
+			if(event.key.keysym.sym == SDLK_d) {keymap[KEY_TILT_RIGHT] = 0;}
+			if(event.key.keysym.sym == SDLK_a) {keymap[KEY_TILT_LEFT] = 0;}
+			if(event.key.keysym.sym == SDLK_w) {keymap[KEY_FORWARD] = 0;}
+			if(event.key.keysym.sym == SDLK_s) {keymap[KEY_BACKWARD] = 0;}
+            break;
         default:
             break;
+    }
+    if(keymap[KEY_TILT_LEFT]) {PlayerObj.angle -= TURN_SPEED*UNIT_ANGLE;}
+    if(keymap[KEY_TILT_RIGHT]) {PlayerObj.angle += TURN_SPEED*UNIT_ANGLE;}
+
+    if(keymap[KEY_FORWARD]){
+        PlayerObj.xPos += PLAYER_SPEED*cos(PlayerObj.angle);
+        PlayerObj.zPos += PLAYER_SPEED*sin(PlayerObj.angle);
+    }
+    if(keymap[KEY_BACKWARD]){
+        PlayerObj.xPos -= PLAYER_SPEED*cos(PlayerObj.angle);
+        PlayerObj.zPos -= PLAYER_SPEED*sin(PlayerObj.angle);
+    }
+    /*
+    if(!keymap[KEY_FORWARD] && !keymap[KEY_BACKWARD]) {
+        PlayerObj->speed[0] = 0;
+        PlayerObj->speed[1] = 0;
+    }
+    */
+}
+#define FPS 60                          //frequencia
+#define FRAME_TARGET_TIME (1000 / FPS)  //Periodo (em ms)
+                                        //
+int last_frame_t = 0;
+
+void update(void){
+    int time_passed = SDL_GetTicks() - last_frame_t;
+    int time_to_wait = FRAME_TARGET_TIME - time_passed;
+    if(time_to_wait > 0){
+        SDL_Delay(time_to_wait);
     }
 }
 
@@ -130,7 +182,7 @@ int main(void){
     }
 
     window = SDL_CreateWindow(
-            "BMPviewer",
+            "Simple MODE 7 engine",
             SDL_WINDOWPOS_CENTERED,
             SDL_WINDOWPOS_CENTERED,
             1024,
@@ -141,27 +193,9 @@ int main(void){
 
     while(running){
         process_input();
+        update();
         renderCameraPlane();
     }
-
-    /*
-    while(running){
-        for(int y0 = 0; y0 < height; y0 ++){
-            for(int x0 = 0; x0 < width; x0++){
-                int x = x0;
-                int y = y0;
-                SDL_Color color = array[y0*width + x0];
-                SDL_SetRenderDrawColor(renderer, color.r, color.g, color.b, 255);
-                SDL_Rect pixel = {x0*4, y0*4, 4, 4};
-                SDL_RenderFillRect(renderer, &pixel);
-
-            }
-        }
-        SDL_RenderPresent(renderer);
-        process_input();
-    }
-    */
-
     SDL_DestroyRenderer(renderer);
     SDL_DestroyWindow(window);
     SDL_Quit();
