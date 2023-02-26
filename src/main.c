@@ -6,7 +6,7 @@ SDL_Color array[64*64];
 
 struct playerObj PlayerObj = {
     20,
-    64,
+    PLAYER_HEIGHT,
     20,
     0
 };
@@ -115,6 +115,7 @@ void process_input(void){
     }
     if(keymap[KEY_DESCEND]){
         PlayerObj.yPos -= PLAYER_SPEED;
+        if(PlayerObj.yPos < PLAYER_HEIGHT) PlayerObj.yPos = PLAYER_HEIGHT;
     }
 }
                                         //
