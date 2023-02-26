@@ -1,6 +1,6 @@
 #define CAMERA_HEIGHT 512
 #define CAMERA_WIDTH 1024
-#define CAMERA_DISTANCE 10
+#define CAMERA_DISTANCE 100
 
 #define PI 3.14159265359
 #define FOV 66
@@ -11,6 +11,12 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <stdbool.h>
+
+//TODO: points with negative x and z values produce noise on the screen
+//TODO: camera distance still has to be higher than the plane to work.
+//      This can be fixed by checking the deltas
+//TODO: Controls to move player around. Needs speed parameters and bla bla bla
+//TODO: Check negative or obtuse angles to see if the formula works
 
 SDL_Window *window;
 SDL_Renderer *renderer; 
@@ -53,7 +59,7 @@ void drawPoint(float projPoint[], int w, int h){
     int x = projPoint[0];
     SDL_Color color = array[z*64 + x];
     SDL_SetRenderDrawColor(renderer, color.r, color.g, color.b, 255);
-    SDL_Rect pixel = {w, h, 1, 1};
+    SDL_Rect pixel = {w, CAMERA_HEIGHT - h, 1, 1}; //corrects y axis inversion
     SDL_RenderFillRect(renderer, &pixel);
 }
 
