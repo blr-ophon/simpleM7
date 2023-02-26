@@ -111,10 +111,10 @@ void process_input(void){
         PlayerObj.zPos -= PLAYER_SPEED*sin(PlayerObj.angle);
     }
     if(keymap[KEY_ASCEND]){
-        PlayerObj.yPos += PLAYER_SPEED;
+        PlayerObj.yPos += 2*PLAYER_SPEED;
     }
     if(keymap[KEY_DESCEND]){
-        PlayerObj.yPos -= PLAYER_SPEED;
+        PlayerObj.yPos -= 2*PLAYER_SPEED;
         if(PlayerObj.yPos < PLAYER_HEIGHT) PlayerObj.yPos = PLAYER_HEIGHT;
     }
 }
@@ -130,7 +130,7 @@ void update(void){
 
 int main(void){
     FILE *f = fopen("./textures/markitoouro.bmp", "rb");
-    if(!f) fprintf(stdin, "\nNo texture loaded\n");
+    if(!f) {fprintf(stdin, "\nNo texture loaded\n"); exit(EXIT_SUCCESS);}
 
     uint8_t info[54];
     fread(info, sizeof(uint8_t), 54, f);
@@ -141,10 +141,9 @@ int main(void){
     uint16_t bpp = info[28];
     uint32_t compression = info[30];
 
-    printf("WIDTH: %d\n", width);
-    printf("HEIGHT: %d\n", height);
-    printf("BPP:%d\n", bpp);
-    printf("COMPRESSION: %d\n", compression);
+    if(compression == 0 || bpp != 24){
+        fprintf(stdin, "\nInvalid texture (compression or BPP)\n");
+    }
 
     fseek(f, start_offset, SEEK_SET);
     for(int i = height-1; i >= 0; i--){ //FOLLOWING LOOP WORKS FOR BPP = 24
