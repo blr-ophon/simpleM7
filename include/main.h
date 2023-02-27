@@ -9,5 +9,6 @@ struct playerObj{
     float yPos;
     float zPos;
     float angle;
+    float cam_top;
 };
 

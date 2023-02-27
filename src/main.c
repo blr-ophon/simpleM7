@@ -8,10 +8,11 @@ struct playerObj PlayerObj = {
     20,
     PLAYER_HEIGHT,
     20,
-    0
+    0,
+    PLAYER_HEIGHT-1
 };
 bool running = 1;
-bool keymap[6];
+bool keymap[8];
 int last_frame_t = 0;
 
 //Gets the distance in plane xz between the projection of the player
@@ -46,7 +47,7 @@ void drawPoint(float projPoint[], int w, int h){
 void renderCameraPlane(void){
     float rayAngle = PlayerObj.angle;
     float texturePoint[2];
-    float cam_yPos = PlayerObj.yPos-1;
+    float cam_yPos = PlayerObj.cam_top;
     //right side rays
     for(int h = 0; h < CAMERA_HEIGHT; h++, cam_yPos--){
         for(int w = CAMERA_WIDTH/2; w < CAMERA_WIDTH; w++){
@@ -56,7 +57,7 @@ void renderCameraPlane(void){
         }
         rayAngle = PlayerObj.angle; 
     }
-    cam_yPos = PlayerObj.yPos-1;
+    cam_yPos = PlayerObj.cam_top;
 
     //left side rays
     rayAngle -= UNIT_ANGLE;
@@ -87,6 +88,8 @@ void process_input(void){
 			if(event.key.keysym.sym == SDLK_s) {keymap[KEY_BACKWARD] = 1;}
 			if(event.key.keysym.sym == SDLK_SPACE) {keymap[KEY_ASCEND] = 1;}
 			if(event.key.keysym.sym == SDLK_LSHIFT) {keymap[KEY_DESCEND] = 1;}
+			if(event.key.keysym.sym == SDLK_j) {keymap[KEY_LOOK_DOWN] = 1;}
+			if(event.key.keysym.sym == SDLK_u) {keymap[KEY_LOOK_UP] = 1;}
             break;
 		case SDL_KEYUP:
 			if(event.key.keysym.sym == SDLK_d) {keymap[KEY_TILT_RIGHT] = 0;}
@@ -95,6 +98,8 @@ void process_input(void){
 			if(event.key.keysym.sym == SDLK_s) {keymap[KEY_BACKWARD] = 0;}
 			if(event.key.keysym.sym == SDLK_SPACE) {keymap[KEY_ASCEND] = 0;}
 			if(event.key.keysym.sym == SDLK_LSHIFT) {keymap[KEY_DESCEND] = 0;}
+			if(event.key.keysym.sym == SDLK_j) {keymap[KEY_LOOK_DOWN] = 0;}
+			if(event.key.keysym.sym == SDLK_u) {keymap[KEY_LOOK_UP] = 0;}
             break;
         default:
             break;
@@ -112,10 +117,18 @@ void process_input(void){
     }
     if(keymap[KEY_ASCEND]){
         PlayerObj.yPos += 2*PLAYER_SPEED;
+        PlayerObj.cam_top += 2*PLAYER_SPEED;
     }
     if(keymap[KEY_DESCEND]){
         PlayerObj.yPos -= 2*PLAYER_SPEED;
         if(PlayerObj.yPos < PLAYER_HEIGHT) PlayerObj.yPos = PLAYER_HEIGHT;
+        PlayerObj.cam_top -= 2*PLAYER_SPEED;
+    }
+    if(keymap[KEY_LOOK_DOWN]){
+        PlayerObj.cam_top -= PLAYER_SPEED;
+    }
+    if(keymap[KEY_LOOK_UP]){
+        PlayerObj.cam_top += PLAYER_SPEED;
     }
 }
                                         //

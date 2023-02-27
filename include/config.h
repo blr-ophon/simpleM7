@@ -17,6 +17,8 @@
 #define KEY_BACKWARD 3
 #define KEY_ASCEND 4
 #define KEY_DESCEND 5
+#define KEY_LOOK_UP 6
+#define KEY_LOOK_DOWN 7
 
 #define FPS 60                          //frequencia
 #define FRAME_TARGET_TIME (1000 / FPS)  //Periodo (em ms)
