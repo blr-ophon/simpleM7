@@ -4,6 +4,14 @@ SDL_Window *window;
 SDL_Renderer *renderer; 
 SDL_Color array[64*64];
 
+//UPDATED PROCESS: (eliminates vertical camera plane problem)
+//1 - Based on the player position, it's angle to xy(for yaw), it's angle to xz (for pitch)
+//    and it's angle to yz (for roll), determine somehow 3 points on the camera plane
+//    vertices to get 2 vectors.
+//2 - Calculate unit vector of e1 and e2.
+//3 - Add a (WIDTH) and (HEIGHT) number of unit vectors to scanline through the plane using 
+//    the same formulas.
+
 struct playerObj PlayerObj = {
     20,
     PLAYER_HEIGHT,
