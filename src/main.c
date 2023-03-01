@@ -17,17 +17,18 @@ struct playerObj PlayerObj = {
     PLAYER_HEIGHT,
     20,
     0,
-    PLAYER_HEIGHT-1
+    PLAYER_HEIGHT-1,
+    32
 };
 bool running = 1;
-bool keymap[8];
+bool keymap[10];
 int last_frame_t = 0;
 
 //Gets the distance in plane xz between the projection of the player
 //and the point the player is seeing. Distance in xz depends only on
 //playeryPos and the scanline y coordinate
 int getDistancePlaneXZ(float yPos, float cam_yPos){ 
-        return CAMERA_DISTANCE*(yPos/(yPos - cam_yPos));
+        return PlayerObj.cam_dist*(yPos/(yPos - cam_yPos));
 }
 
 //receives the "scanline" or cam_yPos, an angle and returns the projected point
@@ -97,7 +98,9 @@ void process_input(void){
 			if(event.key.keysym.sym == SDLK_SPACE) {keymap[KEY_ASCEND] = 1;}
 			if(event.key.keysym.sym == SDLK_LSHIFT) {keymap[KEY_DESCEND] = 1;}
 			if(event.key.keysym.sym == SDLK_j) {keymap[KEY_LOOK_DOWN] = 1;}
-			if(event.key.keysym.sym == SDLK_u) {keymap[KEY_LOOK_UP] = 1;}
+			if(event.key.keysym.sym == SDLK_k) {keymap[KEY_LOOK_UP] = 1;}
+			if(event.key.keysym.sym == SDLK_v) {keymap[KEY_CAMERA_PLUS] = 1;}
+			if(event.key.keysym.sym == SDLK_c) {keymap[KEY_CAMERA_MINUS] = 1;}
             break;
 		case SDL_KEYUP:
 			if(event.key.keysym.sym == SDLK_d) {keymap[KEY_TILT_RIGHT] = 0;}
@@ -107,7 +110,9 @@ void process_input(void){
 			if(event.key.keysym.sym == SDLK_SPACE) {keymap[KEY_ASCEND] = 0;}
 			if(event.key.keysym.sym == SDLK_LSHIFT) {keymap[KEY_DESCEND] = 0;}
 			if(event.key.keysym.sym == SDLK_j) {keymap[KEY_LOOK_DOWN] = 0;}
-			if(event.key.keysym.sym == SDLK_u) {keymap[KEY_LOOK_UP] = 0;}
+			if(event.key.keysym.sym == SDLK_k) {keymap[KEY_LOOK_UP] = 0;}
+			if(event.key.keysym.sym == SDLK_v) {keymap[KEY_CAMERA_PLUS] = 0;}
+			if(event.key.keysym.sym == SDLK_c) {keymap[KEY_CAMERA_MINUS] = 0;}
             break;
         default:
             break;
@@ -137,6 +142,12 @@ void process_input(void){
     }
     if(keymap[KEY_LOOK_UP]){
         PlayerObj.cam_top += PLAYER_SPEED;
+    }
+    if(keymap[KEY_CAMERA_PLUS]){
+        PlayerObj.cam_dist += 10;
+    }
+    if(keymap[KEY_CAMERA_MINUS]){
+        PlayerObj.cam_dist -= 10;
     }
 }
                                         //

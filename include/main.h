@@ -10,5 +10,6 @@ struct playerObj{
     float zPos;
     float angle;
     float cam_top;
+    float cam_dist;
 };
 

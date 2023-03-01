@@ -3,7 +3,7 @@
 
 #define CAMERA_HEIGHT 256
 #define CAMERA_WIDTH 512
-#define CAMERA_DISTANCE 32
+#define CAMERA_DISTANCE 10
 #define PLAYER_HEIGHT 64
 
 #define PI 3.14159265359
@@ -19,6 +19,8 @@
 #define KEY_DESCEND 5
 #define KEY_LOOK_UP 6
 #define KEY_LOOK_DOWN 7
+#define KEY_CAMERA_PLUS 8
+#define KEY_CAMERA_MINUS 9
 
 #define FPS 60                          //frequencia
 #define FRAME_TARGET_TIME (1000 / FPS)  //Periodo (em ms)
