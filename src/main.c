@@ -134,8 +134,11 @@ void process_input(void){
     }
     if(keymap[KEY_DESCEND]){
         PlayerObj.yPos -= 2*PLAYER_SPEED;
-        if(PlayerObj.yPos < PLAYER_HEIGHT) PlayerObj.yPos = PLAYER_HEIGHT;
-        PlayerObj.cam_top -= 2*PLAYER_SPEED;
+        if(PlayerObj.yPos < PLAYER_HEIGHT){
+            PlayerObj.yPos = PLAYER_HEIGHT;
+        }else{
+            PlayerObj.cam_top -= 2*PLAYER_SPEED;
+        }
     }
     if(keymap[KEY_LOOK_DOWN]){
         PlayerObj.cam_top -= PLAYER_SPEED;

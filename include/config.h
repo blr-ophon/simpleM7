@@ -4,7 +4,7 @@
 #define CAMERA_HEIGHT 256
 #define CAMERA_WIDTH 512
 #define CAMERA_DISTANCE 10
-#define PLAYER_HEIGHT 64
+#define PLAYER_HEIGHT 256
 
 #define PI 3.14159265359
 #define FOV 66
