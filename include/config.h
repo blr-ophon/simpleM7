@@ -1,9 +1,9 @@
 #ifndef CONFIG_H
 #define CONFIG_H
 
-#define CAMERA_HEIGHT 256
+#define CAMERA_HEIGHT 512
 #define CAMERA_WIDTH 512
-#define CAMERA_DISTANCE 10
+//#define CAMERA_DISTANCE 20
 #define PLAYER_HEIGHT 256
 
 #define PI 3.14159265359
@@ -21,6 +21,8 @@
 #define KEY_LOOK_DOWN 7
 #define KEY_CAMERA_PLUS 8
 #define KEY_CAMERA_MINUS 9
+#define KEY_CAMERA_D_PLUS 10
+#define KEY_CAMERA_D_MINUS 11
 
 #define FPS 60                          //frequencia
 #define FRAME_TARGET_TIME (1000 / FPS)  //Periodo (em ms)

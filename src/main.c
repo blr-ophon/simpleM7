@@ -11,6 +11,7 @@ SDL_Color array[64*64];
 //2 - Calculate unit vector of e1 and e2.
 //3 - Add a (WIDTH) and (HEIGHT) number of unit vectors to scanline through the plane using 
 //    the same formulas.
+//
 
 struct playerObj PlayerObj = {
     20,
@@ -21,23 +22,22 @@ struct playerObj PlayerObj = {
     32
 };
 bool running = 1;
-bool keymap[10];
+bool keymap[12];
 int last_frame_t = 0;
 
 //Gets the distance in plane xz between the projection of the player
 //and the point the player is seeing. Distance in xz depends only on
 //playeryPos and the scanline y coordinate
 int getDistancePlaneXZ(float yPos, float cam_yPos){ 
-        return PlayerObj.cam_dist*(yPos/(yPos - cam_yPos));
+    return fabs(PlayerObj.cam_dist*(yPos/(yPos - cam_yPos)));
 }
 
 //receives the "scanline" or cam_yPos, an angle and returns the projected point
 //on the floor texture. Expects the caller to calculate the angle by adding and 
 //subtracting unit angles (based on FOV) from the player view angle.
-void getFloorPoint(float projPoint[], float cam_yPos, float angle){
+void getFloorPoint(float projPoint[], float delta, float angle){
     //TODO: Implement fog and increase performance by ignoring points too distant
     //TODO: There should be a more efficient way to do this. Give it some thought
-    float delta = getDistancePlaneXZ(PlayerObj.yPos, cam_yPos);
     projPoint[0] = fmod(delta*cos(angle) + PlayerObj.xPos, 64);
     projPoint[0] = fabs(projPoint[0]);
     projPoint[1] = fmod(delta*sin(angle) + PlayerObj.zPos, 64);
@@ -54,13 +54,18 @@ void drawPoint(float projPoint[], int w, int h){
 }
 
 void renderCameraPlane(void){
+    SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
+    SDL_RenderClear(renderer);
+    
     float rayAngle = PlayerObj.angle;
     float texturePoint[2];
     float cam_yPos = PlayerObj.cam_top;
     //right side rays
     for(int h = 0; h < CAMERA_HEIGHT; h++, cam_yPos--){
         for(int w = CAMERA_WIDTH/2; w < CAMERA_WIDTH; w++){
-            getFloorPoint(texturePoint, cam_yPos, rayAngle);
+            float delta = getDistancePlaneXZ(PlayerObj.yPos, cam_yPos);
+            //if(delta > 200) break;
+            getFloorPoint(texturePoint, delta, rayAngle);
             drawPoint(texturePoint, w, h);
             rayAngle += UNIT_ANGLE;
         }
@@ -72,7 +77,9 @@ void renderCameraPlane(void){
     rayAngle -= UNIT_ANGLE;
     for(int h = 0; h < CAMERA_HEIGHT; h++, cam_yPos--){
         for(int w = CAMERA_WIDTH/2 - 1; w >= 0; w--){
-            getFloorPoint(texturePoint, cam_yPos, rayAngle);
+            float delta = getDistancePlaneXZ(PlayerObj.yPos, cam_yPos);
+            //if(delta > 200) continue;
+            getFloorPoint(texturePoint, delta, rayAngle);
             drawPoint(texturePoint, w, h);
             rayAngle -= UNIT_ANGLE;
         }
@@ -101,6 +108,8 @@ void process_input(void){
 			if(event.key.keysym.sym == SDLK_k) {keymap[KEY_LOOK_UP] = 1;}
 			if(event.key.keysym.sym == SDLK_v) {keymap[KEY_CAMERA_PLUS] = 1;}
 			if(event.key.keysym.sym == SDLK_c) {keymap[KEY_CAMERA_MINUS] = 1;}
+			if(event.key.keysym.sym == SDLK_o) {keymap[KEY_CAMERA_D_PLUS] = 1;}
+			if(event.key.keysym.sym == SDLK_p) {keymap[KEY_CAMERA_D_MINUS] = 1;}
             break;
 		case SDL_KEYUP:
 			if(event.key.keysym.sym == SDLK_d) {keymap[KEY_TILT_RIGHT] = 0;}
@@ -113,6 +122,8 @@ void process_input(void){
 			if(event.key.keysym.sym == SDLK_k) {keymap[KEY_LOOK_UP] = 0;}
 			if(event.key.keysym.sym == SDLK_v) {keymap[KEY_CAMERA_PLUS] = 0;}
 			if(event.key.keysym.sym == SDLK_c) {keymap[KEY_CAMERA_MINUS] = 0;}
+			if(event.key.keysym.sym == SDLK_o) {keymap[KEY_CAMERA_D_PLUS] = 0;}
+			if(event.key.keysym.sym == SDLK_p) {keymap[KEY_CAMERA_D_MINUS] = 0;}
             break;
         default:
             break;
@@ -151,6 +162,7 @@ void process_input(void){
     }
     if(keymap[KEY_CAMERA_MINUS]){
         PlayerObj.cam_dist -= 10;
+        if(PlayerObj.cam_dist <= 1) PlayerObj.cam_dist = 1;
     }
 }
                                         //
@@ -194,7 +206,7 @@ int main(void){
             SDL_WINDOWPOS_CENTERED,
             SDL_WINDOWPOS_CENTERED,
             1024,
-            512,
+            1024,
             SDL_WINDOW_BORDERLESS
             );
     renderer = SDL_CreateRenderer(window, -1, 0);
