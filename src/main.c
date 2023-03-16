@@ -64,7 +64,8 @@ void renderCameraPlane(void){
     for(int h = 0; h < CAMERA_HEIGHT; h++, cam_yPos--){
         for(int w = CAMERA_WIDTH/2; w < CAMERA_WIDTH; w++){
             float delta = getDistancePlaneXZ(PlayerObj.yPos, cam_yPos);
-            //if(delta > 200) break;
+            if(PlayerObj.yPos < cam_yPos) break;
+            //if(delta > 500) break;
             getFloorPoint(texturePoint, delta, rayAngle);
             drawPoint(texturePoint, w, h);
             rayAngle += UNIT_ANGLE;
@@ -78,7 +79,8 @@ void renderCameraPlane(void){
     for(int h = 0; h < CAMERA_HEIGHT; h++, cam_yPos--){
         for(int w = CAMERA_WIDTH/2 - 1; w >= 0; w--){
             float delta = getDistancePlaneXZ(PlayerObj.yPos, cam_yPos);
-            //if(delta > 200) continue;
+            if(PlayerObj.yPos < cam_yPos) break;
+            //if(delta > 500) break;
             getFloorPoint(texturePoint, delta, rayAngle);
             drawPoint(texturePoint, w, h);
             rayAngle -= UNIT_ANGLE;
