@@ -49,7 +49,7 @@ void drawPoint(float projPoint[], int w, int h){
     int z = projPoint[1];
     SDL_Color color = array[z*64 + x];
     SDL_SetRenderDrawColor(renderer, color.r, color.g, color.b, 255);
-    SDL_Rect pixel = {2*w, 2*h, 2, 2}; //corrects y axis inversion
+    SDL_Rect pixel = {4*w, 4*h, 4, 4}; //corrects y axis inversion
     SDL_RenderFillRect(renderer, &pixel);
 }
 
@@ -158,10 +158,10 @@ void process_input(void){
         PlayerObj.cam_top += PLAYER_SPEED;
     }
     if(keymap[KEY_CAMERA_PLUS]){
-        PlayerObj.cam_dist += 10;
+        PlayerObj.cam_dist += PLAYER_SPEED;
     }
     if(keymap[KEY_CAMERA_MINUS]){
-        PlayerObj.cam_dist -= 10;
+        PlayerObj.cam_dist -= PLAYER_SPEED;
         if(PlayerObj.cam_dist <= 1) PlayerObj.cam_dist = 1;
     }
 }

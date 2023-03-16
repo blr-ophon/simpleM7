@@ -1,8 +1,8 @@
 #ifndef CONFIG_H
 #define CONFIG_H
 
-#define CAMERA_HEIGHT 512
-#define CAMERA_WIDTH 512
+#define CAMERA_HEIGHT 256
+#define CAMERA_WIDTH 256
 //#define CAMERA_DISTANCE 20
 #define PLAYER_HEIGHT 256
 
@@ -27,7 +27,7 @@
 #define FPS 60                          //frequencia
 #define FRAME_TARGET_TIME (1000 / FPS)  //Periodo (em ms)
 
-#define PLAYER_SPEED 15
-#define TURN_SPEED 50
+#define PLAYER_SPEED 5
+#define TURN_SPEED 15
 
 #endif
